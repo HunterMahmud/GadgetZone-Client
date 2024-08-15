@@ -43,6 +43,7 @@ const AuthProvider = ({ children }) => {
         // console.log(currentUser);
         // console.log(userInfo);
         setUser(currentUser);
+        setLoading(false);
       } else {
         // remove token from local storage
         setUser(null);
