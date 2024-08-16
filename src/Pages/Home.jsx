@@ -1,31 +1,27 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import useAxiosPublic from "./../hooks/useAxiosPublic";
 
 const Home = () => {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [brandFilter, setBrandFilter] = useState("");
-  const [priceRange, setPriceRange] = useState([0, 1000]);
+  const [priceRange, setPriceRange] = useState([0, 10000000]);
   const [sortOption, setSortOption] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
+  const [isFilterVisible, setIsFilterVisible] = useState(false);
 
   useEffect(() => {
     fetchProducts();
-  }, [
-    searchTerm,
-    categoryFilter,
-    brandFilter,
-    priceRange,
-    sortOption,
-    currentPage,
-  ]);
+    fetchFilters();
+  }, [categoryFilter, brandFilter, priceRange, sortOption, currentPage]);
 
   const fetchProducts = async () => {
     try {
-      const { data } = await axios("http://localhost:3000/products", {
+      const { data } = await axios.get("http://localhost:3000/products", {
         params: {
           searchTerm,
           category: categoryFilter,
@@ -37,24 +33,44 @@ const Home = () => {
         },
       });
       setProducts(data.products);
-      
       setTotalPages(data.totalPages);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
   };
 
+  const fetchFilters = async () => {
+    try {
+      const categoriesRes = await axios.get("http://localhost:3000/categories");
+      setCategories(categoriesRes.data);
+      
+    } catch (error) {
+      console.error("Error fetching filters:", error);
+    }
+  };
+
+  const handleSearch = () => {
+    setCurrentPage(1);
+    fetchProducts();
+  };
+
   return (
     <div className="container mx-auto p-4">
       {/* Search Bar */}
-      <div className="mb-4">
+      <div className="flex mb-4">
         <input
           type="text"
           placeholder="Search products..."
-          className="w-full p-2 border rounded"
+          className="flex-grow p-2 border rounded"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
+        <button
+          onClick={handleSearch}
+          className="ml-2 p-2 bg-blue-500 text-white rounded"
+        >
+          Search
+        </button>
       </div>
 
       {/* Main Content */}
@@ -72,6 +88,8 @@ const Home = () => {
                 <h2 className="mt-2 text-xl">{product.ProductName}</h2>
                 <p className="mt-2 text-gray-600">{product.Description}</p>
                 <p className="mt-2 text-gray-900">${product.Price}</p>
+                <p className="mt-2 text-gray-600">Brand: {product.Brand}</p>
+                <p className="mt-2 text-gray-600">Category: {product.Category}</p>
               </div>
             ))}
           </div>
@@ -98,8 +116,13 @@ const Home = () => {
           </div>
         </div>
 
-        <aside className="hidden lg:block w-1/4 ml-4">
-          <div className="sticky top-0 p-4 border rounded">
+        {/* Filters and Sorting (Aside) */}
+        <aside
+          className={`${
+            isFilterVisible ? "block" : "hidden"
+          } lg:block w-1/4 ml-4 fixed inset-y-0 right-0 bg-white shadow-lg lg:relative lg:shadow-none p-4 border rounded`}
+        >
+          <div className="lg:sticky top-0">
             <h3 className="text-xl mb-4">Filter By</h3>
 
             {/* Filter Options */}
@@ -111,11 +134,11 @@ const Home = () => {
                 value={brandFilter}
               >
                 <option value="">All Brands</option>
-                <option value="Samsung">Samsung</option>
-                <option value="Apple">Apple</option>
-                <option value="Sony">Sony</option>
-                <option value="Dell">Dell</option>
-                <option value="HP">HP</option>
+                {brands.map((brand) => (
+                  <option key={brand} value={brand}>
+                    {brand}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -127,10 +150,11 @@ const Home = () => {
                 value={categoryFilter}
               >
                 <option value="">All Categories</option>
-                <option value="Mobile">Mobile</option>
-                <option value="Laptop">Laptop</option>
-                <option value="Headphone">Headphone</option>
-                <option value="Earbud">Earbud</option>
+                {categories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -140,14 +164,18 @@ const Home = () => {
                 type="number"
                 className="w-full p-2 border rounded mb-2"
                 placeholder="Min Price"
-                onChange={(e) => setPriceRange([e.target.value, priceRange[1]])}
+                onChange={(e) =>
+                  setPriceRange([e.target.value, priceRange[1]])
+                }
                 value={priceRange[0]}
               />
               <input
                 type="number"
                 className="w-full p-2 border rounded"
                 placeholder="Max Price"
-                onChange={(e) => setPriceRange([priceRange[0], e.target.value])}
+                onChange={(e) =>
+                  setPriceRange([priceRange[0], e.target.value])
+                }
                 value={priceRange[1]}
               />
             </div>
@@ -164,8 +192,26 @@ const Home = () => {
               <option value="priceHighToLow">Price: High to Low</option>
               <option value="newestFirst">Date Added: Newest First</option>
             </select>
+
+            {/* Close Button for Mobile */}
+            <button
+              className="block lg:hidden mt-4 p-2 bg-red-500 text-white rounded"
+              onClick={() => setIsFilterVisible(false)}
+            >
+              Close Filters
+            </button>
           </div>
         </aside>
+
+        {/* Filter Button for Mobile */}
+        {!isFilterVisible && (
+          <button
+            className="lg:hidden fixed bottom-4 right-4 p-4 bg-blue-500 text-white rounded-full shadow-lg"
+            onClick={() => setIsFilterVisible(true)}
+          >
+            Filter
+          </button>
+        )}
       </div>
     </div>
   );
