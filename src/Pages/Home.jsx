@@ -96,13 +96,14 @@ const Home = () => {
                       className="w-full h-40 object-cover"
                     />
                     <h2 className="mt-2 text-xl">{product.ProductName}</h2>
-                    <h2 className="mt-2 ">
+                    <p className="mt-2 ">
                       Released: {new Date(
                         product?.ProductCreationDateTime
                       ).toLocaleDateString()}
-                    </h2>
+                    </p>
                     <p className="mt-2 text-gray-600">{product.Description}</p>
-                    <p className="mt-2 text-gray-900">${product.Price}</p>
+                    <p className="mt-2 text-gray-900">Price: ${product.Price}</p>
+                    <p className="mt-2 text-gray-900">Ratings: {product.Ratings}</p>
                     <p className="mt-2 text-gray-600">Brand: {product.Brand}</p>
                     <p className="mt-2 text-gray-600">
                       Category: {product.Category}
