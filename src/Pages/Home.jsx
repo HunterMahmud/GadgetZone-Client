@@ -41,6 +41,7 @@ const Home = () => {
 
   const fetchFilters = async () => {
     try {
+      // console.log("hello");
       const categoriesRes = await axios.get("http://localhost:3000/categories");
       setCategories(categoriesRes.data);
       const brandsRes = await axios.get("http://localhost:3000/brands");
@@ -90,7 +91,9 @@ const Home = () => {
                 <p className="mt-2 text-gray-600">{product.Description}</p>
                 <p className="mt-2 text-gray-900">${product.Price}</p>
                 <p className="mt-2 text-gray-600">Brand: {product.Brand}</p>
-                <p className="mt-2 text-gray-600">Category: {product.Category}</p>
+                <p className="mt-2 text-gray-600">
+                  Category: {product.Category}
+                </p>
               </div>
             ))}
           </div>
@@ -165,18 +168,14 @@ const Home = () => {
                 type="number"
                 className="w-full p-2 border rounded mb-2"
                 placeholder="Min Price"
-                onChange={(e) =>
-                  setPriceRange([e.target.value, priceRange[1]])
-                }
+                onChange={(e) => setPriceRange([e.target.value, priceRange[1]])}
                 value={priceRange[0]}
               />
               <input
                 type="number"
                 className="w-full p-2 border rounded"
                 placeholder="Max Price"
-                onChange={(e) =>
-                  setPriceRange([priceRange[0], e.target.value])
-                }
+                onChange={(e) => setPriceRange([priceRange[0], e.target.value])}
                 value={priceRange[1]}
               />
             </div>
