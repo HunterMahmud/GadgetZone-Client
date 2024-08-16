@@ -23,7 +23,7 @@ const Home = () => {
   }, [categoryFilter, priceRange, brandFilter, sortOption]);
   const fetchProducts = async () => {
     try {
-      console.log(currentPage);
+      // console.log(currentPage);
       const { data } = await axios.get("http://localhost:3000/products", {
         params: {
           searchTerm,

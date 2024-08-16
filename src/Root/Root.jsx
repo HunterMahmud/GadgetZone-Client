@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-// import Footer from './../components/Footer/Footer';
+import Footer from "../components/Footer";
 import Navbar from './../components/Navbar';
 
 const Root = () => {
@@ -9,7 +9,7 @@ const Root = () => {
            <div className="min-h-[calc(100vh-368.8px)]">
            <Outlet/>
            </div>
-            {/* <Footer/> */}
+            <Footer/>
         </div>
     );
 };
