@@ -43,7 +43,8 @@ const Home = () => {
     try {
       const categoriesRes = await axios.get("http://localhost:3000/categories");
       setCategories(categoriesRes.data);
-      
+      const brandsRes = await axios.get("http://localhost:3000/brands");
+      setBrands(brandsRes.data);
     } catch (error) {
       console.error("Error fetching filters:", error);
     }
