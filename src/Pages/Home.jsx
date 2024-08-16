@@ -18,9 +18,12 @@ const Home = () => {
     fetchProducts();
     fetchFilters();
   }, [categoryFilter, brandFilter, priceRange, sortOption, currentPage]);
-
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [categoryFilter, priceRange, brandFilter, sortOption]);
   const fetchProducts = async () => {
     try {
+      console.log(currentPage);
       const { data } = await axios.get("http://localhost:3000/products", {
         params: {
           searchTerm,
@@ -50,7 +53,7 @@ const Home = () => {
       console.error("Error fetching filters:", error);
     }
   };
-
+  // console.log(products);
   const handleSearch = () => {
     setCurrentPage(1);
     fetchProducts();
@@ -58,6 +61,9 @@ const Home = () => {
 
   return (
     <div className="container mx-auto p-4">
+      <div className="w-full text-2xl font-bold my-2 text-center">
+        <p>{brandFilter ? brandFilter : "All Brands"}</p>
+      </div>
       {/* Search Bar */}
       <div className="flex mb-4">
         <input
@@ -79,48 +85,63 @@ const Home = () => {
       <div className="flex">
         {/* Product Listing */}
         <div className="flex-grow">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {products.map((product) => (
-              <div key={product._id} className="border p-4 rounded">
-                <img
-                  src={product.ProductImage}
-                  alt={product.ProductName}
-                  className="w-full h-40 object-cover"
-                />
-                <h2 className="mt-2 text-xl">{product.ProductName}</h2>
-                <p className="mt-2 text-gray-600">{product.Description}</p>
-                <p className="mt-2 text-gray-900">${product.Price}</p>
-                <p className="mt-2 text-gray-600">Brand: {product.Brand}</p>
-                <p className="mt-2 text-gray-600">
-                  Category: {product.Category}
-                </p>
+          {products.length > 0 ? (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {products.map((product) => (
+                  <div key={product._id} className="border p-4 rounded">
+                    <img
+                      src={product.ProductImage}
+                      alt={product.ProductName}
+                      className="w-full h-40 object-cover"
+                    />
+                    <h2 className="mt-2 text-xl">{product.ProductName}</h2>
+                    <h2 className="mt-2 ">
+                      Released: {new Date(
+                        product?.ProductCreationDateTime
+                      ).toLocaleDateString()}
+                    </h2>
+                    <p className="mt-2 text-gray-600">{product.Description}</p>
+                    <p className="mt-2 text-gray-900">${product.Price}</p>
+                    <p className="mt-2 text-gray-600">Brand: {product.Brand}</p>
+                    <p className="mt-2 text-gray-600">
+                      Category: {product.Category}
+                    </p>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
 
-          {/* Pagination */}
-          <div className="mt-4 flex justify-center items-center">
-            <button
-              className="px-4 py-2 border rounded"
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            >
-              Previous
-            </button>
-            <span className="mx-4">
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              className="px-4 py-2 border rounded"
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-              }
-            >
-              Next
-            </button>
-          </div>
+              {/* Pagination */}
+              <div className="mt-4 flex justify-center items-center">
+                <button
+                  className="px-4 py-2 border rounded"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                >
+                  Previous
+                </button>
+                <span className="mx-4">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  className="px-4 py-2 border rounded"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                >
+                  Next
+                </button>
+              </div>
+            </>
+          ) : (
+            <div className="flex items-center justify-center h-96 w-full">
+              <p>No product found</p>
+            </div>
+          )}
         </div>
 
-        {/* Filters and Sorting (Aside) */}
+        {/* Filters and Sorting in the right side */}
         <aside
           className={`${
             isFilterVisible ? "block" : "hidden"
