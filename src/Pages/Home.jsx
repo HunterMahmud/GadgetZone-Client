@@ -146,7 +146,7 @@ const Home = () => {
         <aside
           className={`${
             isFilterVisible ? "block" : "hidden"
-          } lg:block w-1/4 ml-4 fixed inset-y-0 right-0 bg-white shadow-lg lg:relative lg:shadow-none p-4 border rounded`}
+          } lg:block lg:w-1/4 w-[200px] ml-4 fixed inset-y-0 right-0 bg-white shadow-lg lg:relative lg:shadow-none p-4 border rounded`}
         >
           <div className="lg:sticky top-0">
             <h3 className="text-xl mb-4">Filter By</h3>
@@ -220,7 +220,7 @@ const Home = () => {
               className="block lg:hidden mt-4 p-2 bg-red-500 text-white rounded"
               onClick={() => setIsFilterVisible(false)}
             >
-              Close Filters
+              Close
             </button>
           </div>
         </aside>
